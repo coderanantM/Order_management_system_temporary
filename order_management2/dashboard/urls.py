@@ -8,4 +8,6 @@ urlpatterns = [
     path('list-new-part/', views.list_new_part, name='list_new_part'),
     path('update-production/', views.update_daily_production, name='update_daily_production'),
     path('get-part-details/<str:part_code>/', views.get_part_details, name='get_part_details'),
+    path('export_schedule/<str:part_code>/<str:date>/', views.export_schedule_for_date_to_csv, name='export_schedule_for_date_to_csv'),
+    path('export_schedule/<str:part_code>/', views.export_schedule_to_csv, name='export_schedule_to_csv'),
 ]

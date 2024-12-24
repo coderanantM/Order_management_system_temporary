@@ -71,14 +71,44 @@
         button:hover {
             background-color: #45a049;
         }
+        .back-link {
+            display: inline-block;
+            margin-top: 15px;
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        .back-link:hover {
+            color: #388e3c;
+        }
+        .alert {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .alert-info {
+            background-color: #e7f3fe;
+            color: #31708f;
+        }
     </style>
 </head>
 <body>
     <header>
-        Update Daily Production
+        Pragati Engineers - Update Daily Production
     </header>
 
     <div class="container">
+        <h1>Update Daily Production</h1>
+
+        {% if messages %}
+            <div>
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         <form method="POST">
             {% csrf_token %}
             
@@ -106,15 +136,7 @@
             <button type="submit">Update Production</button>
         </form>
 
-        {% if messages %}
-            <div>
-                {% for message in messages %}
-                    <p>{{ message }}</p>
-                {% endfor %}
-            </div>
-        {% endif %}
-
-        <a href="{% url 'dashboard' %}">Return to Dashboard</a>
+        <a class="back-link" href="{% url 'dashboard' %}">← Return to Dashboard</a>
     </div>
 </body>
 </html>

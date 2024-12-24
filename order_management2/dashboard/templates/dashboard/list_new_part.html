@@ -5,54 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>List New Part</title>
     <style>
+        /* General Styles */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
         }
         header {
             background-color: #4CAF50;
-            padding: 10px 20px;
-            color: white;
+            padding: 20px;
             text-align: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
         }
         .container {
-            max-width: 800px;
-            margin: 20px auto;
+            max-width: 600px;
+            margin: 50px auto;
             padding: 20px;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         h2 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            text-align: center;
             color: #333;
         }
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-        form label {
+        label {
             font-weight: bold;
             margin-bottom: 5px;
+            display: block;
+            color: #555;
         }
-        form input, form select, form textarea {
+        select, input, textarea {
+            width: 100%;
             padding: 10px;
             margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
             font-size: 16px;
+            background: #f9f9f9;
+            transition: border-color 0.3s;
         }
-        form button {
+        select:focus, input:focus, textarea:focus {
+            border-color: #4CAF50;
+            outline: none;
+            background: #fff;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
             background-color: #4CAF50;
             color: white;
             border: none;
-            padding: 10px 15px;
+            border-radius: 5px;
             font-size: 16px;
-            border-radius: 4px;
+            font-weight: bold;
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        form button:hover {
+        button:hover {
             background-color: #45a049;
         }
         .back-link {
@@ -79,7 +95,7 @@
 </head>
 <body>
     <header>
-        <h1>Pragati Engineers - List a New Part</h1>
+        Pragati Engineers - List a New Part
     </header>
 
     <div class="container">

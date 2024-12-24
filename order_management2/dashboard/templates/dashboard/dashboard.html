@@ -9,12 +9,16 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
         }
         header {
             background-color: #4CAF50;
-            padding: 10px 20px;
-            color: white;
+            padding: 20px;
             text-align: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
         }
         nav {
             background-color: #333;
@@ -66,7 +70,36 @@
             font-weight: bold;
             color: #4CAF50;
         }
+        .chart-container {
+            width: 90%;
+            max-width: 800px;
+            margin: 20px auto;
+        }
+        canvas {
+            width: 100% !important;
+            height: 500px !important;
+        }
+        .export-button {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        .export-button:hover {
+            background-color: #45a049;
+        }
+        .export-label {
+            font-weight: bold;
+        }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -119,6 +152,8 @@
                         <th>Additional Order</th>
                         <th>Quantity Dispatched</th>
                         <th>Remaining Quantity</th>
+                        <th>Balance Days</th>
+                        <th>Balance Rate per Day</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -128,11 +163,101 @@
                             <td>{{ day.additional_order }}</td>
                             <td>{{ day.quantity_dispatched }}</td>
                             <td>{{ day.remaining_quantity }}</td>
+                            <td>{{ day.balance_days }}</td>
+                            <td>{{ day.balance_rate_per_day }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
+            <a class="export-button" href="{% url 'export_schedule_to_csv' selected_part_code %}">Export Monthly Schedule to CSV</a>
+
+            <!-- Form to export records for a specific date -->
+            <form method="GET" action="{% url 'export_schedule_for_date_to_csv' selected_part_code 'dummy_date' %}" id="export-date-form">
+                <label for="export_date" class="export-label">Select Date to Export:</label>
+                <input type="date" id="export_date" name="export_date" required>
+                <button type="submit" class="export-button">Export Date Records to CSV</button>
+            </form>
         {% endif %}
+
+        <!-- Chart for Open Orders -->
+        <div class="chart-container">
+            <canvas id="openOrdersChart"></canvas>
+        </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var ctx = document.getElementById('openOrdersChart').getContext('2d');
+            var openOrdersChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [{% for part in parts %}'{{ part.part_name }}',{% endfor %}],
+                    datasets: [{
+                        label: 'Open Orders',
+                        data: [{% for part in parts %}{{ part.open_order }},{% endfor %}],
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)',
+                            'rgba(255, 99, 132, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(255, 99, 132, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            type: 'logarithmic',
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value, index, values) {
+                                    if (value === 10 || value === 100 || value === 1000 || value === 10000) {
+                                        return value;
+                                    }
+                                    return null;
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            enabled: true,
+                            mode: 'index',
+                            intersect: false
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutBounce'
+                    }
+                }
+            });
+
+            // Update the form action URL with the selected date
+            document.getElementById('export-date-form').addEventListener('submit', function (event) {
+                var date = document.getElementById('export_date').value;
+                var formAction = this.action;
+                this.action = formAction.replace('dummy_date', date);
+            });
+        });
+    </script>
 </body>
 </html>

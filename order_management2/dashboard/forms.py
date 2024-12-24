@@ -1,5 +1,5 @@
 from django import forms
-from .models import Seller, Part, Buyer
+from .models import Seller, Part, Buyer, ProductionUpdate
 from django.contrib.auth.models import User
 
 class LoginForm(forms.Form):
@@ -44,31 +44,52 @@ class PartProductionForm(forms.Form):
     remaining_quantity = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={'readonly': 'readonly'}), label="Remaining Quantity (Balance)")
 
     def __init__(self, *args, **kwargs):
+        # Part object should be passed in kwargs to prepopulate open order
+        part = kwargs.pop('part', None)
         super().__init__(*args, **kwargs)
-        self.fields['part_code'].choices = [(part.part_code, part.part_code) for part in Part.objects.all()]
+
+        # Dynamically populate part_code choices
+        self.fields['part_code'].choices = [(part.part_code, f"{part.part_code} - {part.part_name}") for part in Part.objects.all()]
+
+
+        # Prepopulate open_order if part is provided
+        if part:
+            self.fields['open_order'].initial = part.open_order
+            self.fields['part_name'].initial = part.part_name
 
     def update_remaining(self, part):
         """
         Update remaining quantity dynamically based on user input and previous balance.
         """
-        additional_order = self.cleaned_data.get('additional_order', 0)
-        quantity_dispatched = self.cleaned_data.get('quantity_dispatched', 0)
+        if not part:
+            raise ValueError("Part instance is required to calculate remaining quantity.")
+
+        additional_order = self.cleaned_data.get('additional_order', 0) or 0
+        quantity_dispatched = self.cleaned_data.get('quantity_dispatched', 0) or 0
+
+        # Fetch the most recent production update for the part
+        previous_update = ProductionUpdate.objects.filter(part=part).order_by('-production_date').first()
+        previous_balance = previous_update.remaining_quantity if previous_update else part.open_order
 
         # Calculate remaining quantity
-        remaining_quantity = part.open_order + additional_order - quantity_dispatched
+        remaining_quantity = previous_balance + additional_order - quantity_dispatched
         self.cleaned_data['remaining_quantity'] = remaining_quantity
 
-        # Update part fields
-        part.remaining_quantity = remaining_quantity
-        part.quantity_dispatched = quantity_dispatched
-        part.additional_order = additional_order
-        part.save()
+        # Save to ProductionUpdate instead of Part
+        ProductionUpdate.objects.create(
+            part=part,
+            production_date=self.cleaned_data['date'],
+            additional_order=additional_order,
+            quantity_dispatched=quantity_dispatched,
+            remaining_quantity=remaining_quantity
+        )
 
         return remaining_quantity
 
 class PartListingForm(forms.ModelForm):
-    buyer_name = forms.CharField(max_length=255, required=True, help_text="Enter the buyer's company name")
+    buyer_name = forms.CharField(max_length=255, required=True, label="Buyer's Company Name")
     date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True, label="Date")
+    open_order = forms.IntegerField(required=True, label="Open Order")
     
     class Meta:
         model = Part
