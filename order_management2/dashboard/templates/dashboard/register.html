@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Seller Dashboard</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        header {
+            background-color: #4CAF50;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            background: #f9f9f9;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            border-color: #4CAF50;
+            outline: none;
+            background: #fff;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .form-footer {
+            text-align: center;
+            margin-top: 15px;
+        }
+        .form-footer a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .form-footer a:hover {
+            color: #388e3c;
+        }
+        .alert {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f8d7da;
+            color: #721c24;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Register as Seller
+    </header>
+
+    <div class="container">
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li class="alert">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" placeholder="Enter your username" required>
+            {{ form.username.errors }}
+
+            <label for="name">Full Name</label>
+            <input type="text" name="name" id="name" placeholder="Enter your full name" required>
+            {{ form.name.errors }}
+
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" placeholder="Enter your email address" required>
+            {{ form.email.errors }}
+
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" placeholder="Enter a strong password" required>
+            {{ form.password.errors }}
+
+            <label for="contact_number">Contact Number</label>
+            <input type="text" name="contact_number" id="contact_number" placeholder="Enter your contact number" required>
+            {{ form.contact_number.errors }}
+
+            <button type="submit">Register</button>
+        </form>
+
+        <div class="form-footer">
+            <p>Already have an account? <a href="{% url 'login_view' %}">Login here</a></p>
+        </div>
+    </div>
+</body>
+</html>

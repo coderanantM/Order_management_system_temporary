@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Daily Production</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        header {
+            background-color: #4CAF50;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+            color: #555;
+        }
+        select, input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            background: #f9f9f9;
+            transition: border-color 0.3s;
+        }
+        select:focus, input:focus {
+            border-color: #4CAF50;
+            outline: none;
+            background: #fff;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Update Daily Production
+    </header>
+
+    <div class="container">
+        <form method="POST">
+            {% csrf_token %}
+            
+            <label for="part_code">Select Part Code</label>
+            {{ form.part_code }}
+            
+            <label for="part_name">Part Name</label>
+            {{ form.part_name }}
+            
+            <label for="open_order">Open Order (Previous Balance)</label>
+            {{ form.open_order }}
+            
+            <label for="date">Date</label>
+            {{ form.date }}
+            
+            <label for="additional_order">Additional Order</label>
+            {{ form.additional_order }}
+            
+            <label for="quantity_dispatched">Quantity Dispatched</label>
+            {{ form.quantity_dispatched }}
+            
+            <label for="remaining_quantity">Remaining Quantity</label>
+            {{ form.remaining_quantity }}
+            
+            <button type="submit">Update Production</button>
+        </form>
+
+        {% if messages %}
+            <div>
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <a href="{% url 'dashboard' %}">Return to Dashboard</a>
+    </div>
+</body>
+</html>
